@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>戒导打卡 - 我的</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            overflow-x: hidden;
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #8a2be2, #4169e1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .gradient-border {
+            position: relative;
+            border-radius: 10px;
+            background: #1e1e1e;
+        }
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            border-radius: 11px;
+            background: linear-gradient(45deg, #8a2be2, #4169e1, #8a2be2);
+            z-index: -1;
+            opacity: 0.7;
+        }
+        .streak-card {
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        .tab-bar {
+            background: rgba(20, 20, 20, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #333;
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 0;
+        }
+        .tab-active {
+            color: #8a2be2;
+        }
+        .health-ring {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(#8a2be2 0%, #4169e1 92%, #2a2a2a 92%, #2a2a2a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .health-ring::before {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #1e1e1e;
+        }
+        .health-ring-text {
+            position: relative;
+            z-index: 1;
+            font-weight: bold;
+            font-size: 18px;
+            color: #fff;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+        .calendar-day {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+        }
+        .calendar-date {
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 12px;
+            position: relative;
+        }
+        .date-completed {
+            background: linear-gradient(135deg, #8a2be2, #4169e1);
+            box-shadow: 0 0 8px rgba(138, 43, 226, 0.6);
+            color: white;
+        }
+        .date-failed {
+            background: linear-gradient(135deg, #e53935, #8e24aa);
+            box-shadow: 0 0 8px rgba(229, 57, 53, 0.6);
+            color: white;
+        }
+        .date-empty {
+            background: #2a2a2a;
+            color: #888;
+        }
+        .date-today {
+            border: 2px solid #8a2be2;
+        }
+        .date-today::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            width: 4px;
+            height: 4px;
+            background: #8a2be2;
+            border-radius: 50%;
+        }
+        .achievement-item {
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .achievement-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+        }
+        .achievement-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8a2be2, #4169e1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+        }
+        .achievement-locked {
+            background: #2a2a2a;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body class="flex flex-col">
+    <!-- 主内容区 -->
+    <div class="flex-1 overflow-y-auto pb-16">
+        <!-- 顶部用户信息 -->
+        <div class="p-5">
+            <div class="flex items-center mb-6">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=150&q=80" class="w-20 h-20 rounded-full border-2 border-purple-600">
+                    <div class="absolute -bottom-1 -right-1 bg-green-500 w-5 h-5 rounded-full border-2 border-gray-900"></div>
+                </div>
+                <div class="ml-4 flex-1">
+                    <h2 class="text-xl font-bold text-white">坚定信念</h2>
+                    <p class="text-sm text-gray-400">坚持第65天</p>
+                    <div class="mt-1 flex items-center">
+                        <span class="text-xs px-2 py-1 bg-purple-900 text-purple-200 rounded-full mr-2">初级戒友</span>
+                        <span class="text-xs px-2 py-1 bg-blue-900 text-blue-200 rounded-full">连续打卡7天</span>
+                    </div>
+                </div>
+                <div class="health-ring">
+                    <span class="health-ring-text">92%</span>
+                </div>
+            </div>
+            
+            <!-- 统计数据 -->
+            <div class="gradient-border p-4 mb-6">
+                <div class="flex justify-between text-center">
+                    <div>
+                        <p class="text-3xl font-bold gradient-text">65</p>
+                        <p class="text-xs text-gray-400">坚持天数</p>
+                    </div>
+                    <div class="h-12 w-px bg-gray-700"></div>
+                    <div>
+                        <p class="text-3xl font-bold text-red-500">3</p>
+                        <p class="text-xs text-gray-400">破戒次数</p>
+                    </div>
+                    <div class="h-12 w-px bg-gray-700"></div>
+                    <div>
+                        <p class="text-3xl font-bold text-green-400">+5%</p>
+                        <p class="text-xs text-gray-400">环比提升</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 打卡日历 -->
+            <div class="streak-card p-4 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-white">打卡日历</h2>
+                    <div class="flex items-center">
+                        <button class="text-gray-400 mr-2"><i class="fas fa-chevron-left"></i></button>
+                        <span class="text-sm">2023年12月</span>
+                        <button class="text-gray-400 ml-2"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="calendar-header">
+                    <div class="calendar-day">日</div>
+                    <div class="calendar-day">一</div>
+                    <div class="calendar-day">二</div>
+                    <div class="calendar-day">三</div>
+                    <div class="calendar-day">四</div>
+                    <div class="calendar-day">五</div>
+                    <div class="calendar-day">六</div>
+                </div>
+                
+                <div class="calendar">
+                    <!-- 第一行 -->
+                    <div class="calendar-date date-empty">26</div>
+                    <div class="calendar-date date-empty">27</div>
+                    <div class="calendar-date date-empty">28</div>
+                    <div class="calendar-date date-empty">29</div>
+                    <div class="calendar-date date-empty">30</div>
+                    <div class="calendar-date date-completed">1</div>
+                    <div class="calendar-date date-completed">2</div>
+                    
+                    <!-- 第二行 -->
+                    <div class="calendar-date date-completed">3</div>
+                    <div class="calendar-date date-completed">4</div>
+                    <div class="calendar-date date-completed">5</div>
+                    <div class="calendar-date date-failed">6</div>
+                    <div class="calendar-date date-completed">7</div>
+                    <div class="calendar-date date-completed">8</div>
+                    <div class="calendar-date date-completed">9</div>
+                    
+                    <!-- 第三行 -->
+                    <div class="calendar-date date-completed">10</div>
+                    <div class="calendar-date date-completed">11</div>
+                    <div class="calendar-date date-completed">12</div>
+                    <div class="calendar-date date-completed">13</div>
+                    <div class="calendar-date date-failed">14</div>
+                    <div class="calendar-date date-completed date-today">15</div>
+                    <div class="calendar-date date-empty">16</div>
+                    
+                    <!-- 第四行 -->
+                    <div class="calendar-date date-empty">17</div>
+                    <div class="calendar-date date-empty">18</div>
+                    <div class="calendar-date date-empty">19</div>
+                    <div class="calendar-date date-empty">20</div>
+                    <div class="calendar-date date-empty">21</div>
+                    <div class="calendar-date date-empty">22</div>
+                    <div class="calendar-date date-empty">23</div>
+                    
+                    <!-- 第五行 -->
+                    <div class="calendar-date date-empty">24</div>
+                    <div class="calendar-date date-empty">25</div>
+                    <div class="calendar-date date-empty">26</div>
+                    <div class="calendar-date date-empty">27</div>
+                    <div class="calendar-date date-empty">28</div>
+                    <div class="calendar-date date-empty">29</div>
+                    <div class="calendar-date date-empty">30</div>
+                    
+                    <!-- 第六行 -->
+                    <div class="calendar-date date-empty">31</div>
+                    <div class="calendar-date date-empty">1</div>
+                    <div class="calendar-date date-empty">2</div>
+                    <div class="calendar-date date-empty">3</div>
+                    <div class="calendar-date date-empty">4</div>
+                    <div class="calendar-date date-empty">5</div>
+                    <div class="calendar-date date-empty">6</div>
+                </div>
+                
+                <div class="flex justify-center mt-4 text-xs">
+                    <div class="flex items-center mr-4">
+                        <div class="w-3 h-3 rounded-full bg-gradient-to-r from-purple-700 to-indigo-700 mr-1"></div>
+                        <span class="text-gray-400">守戒</span>
+                    </div>
+                    <div class="flex items-center mr-4">
+                        <div class="w-3 h-3 rounded-full bg-gradient-to-r from-red-700 to-purple-900 mr-1"></div>
+                        <span class="text-gray-400">破戒</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 rounded-full border border-gray-600 mr-1"></div>
+                        <span class="text-gray-400">未打卡</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 成就系统 -->
+            <div class="streak-card p-4 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-white">我的成就</h2>
+                    <a href="#" class="text-xs text-purple-400">查看全部 <i class="fas fa-chevron-right text-xs"></i></a>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="achievement-item p-3 flex flex-col items-center">
+                        <div class="achievement-icon mb-2">
+                            <i class="fas fa-award text-white"></i>
+                        </div>
+                        <p class="text-xs text-center">坚持7天</p>
+                    </div>
+                    
+                    <div class="achievement-item p-3 flex flex-col items-center">
+                        <div class="achievement-icon mb-2">
+                            <i class="fas fa-medal text-white"></i>
+                        </div>
+                        <p class="text-xs text-center">坚持30天</p>
+                    </div>
+                    
+                    <div class="achievement-item p-3 flex flex-col items-center">
+                        <div class="achievement-icon achievement-locked mb-2">
+                            <i class="fas fa-trophy text-gray-500"></i>
+                        </div>
+                        <p class="text-xs text-center text-gray-500">坚持100天</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 设置选项 -->
+            <div class="streak-card p-4 mb-6">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-purple-900 flex items-center justify-center mr-3">
+                                <i class="fas fa-bell text-purple-200"></i>
+                            </div>
+                            <span>提醒设置</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-500"></i>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center mr-3">
+                                <i class="fas fa-shield-alt text-blue-200"></i>
+                            </div>
+                            <span>隐私设置</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-500"></i>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-indigo-900 flex items-center justify-center mr-3">
+                                <i class="fas fa-cog text-indigo-200"></i>
+                            </div>
+                            <span>通用设置</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-500"></i>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-red-900 flex items-center justify-center mr-3">
+                                <i class="fas fa-question-circle text-red-200"></i>
+                            </div>
+                            <span>帮助与反馈</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-500"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="tab-bar fixed bottom-0 left-0 right-0 flex justify-around py-1">
+        <div class="tab-item text-gray-500">
+            <i class="fas fa-home text-xl"></i>
+            <span class="text-xs mt-1">首页</span>
+        </div>
+        <div class="tab-item tab-active">
+            <i class="fas fa-user text-xl"></i>
+            <span class="text-xs mt-1">我的</span>
+        </div>
+    </div>
+</body>
+</html>
