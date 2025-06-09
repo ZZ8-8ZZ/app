@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录与注册 - 课程表小程序</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .capsule-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 87px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
+        }
+        .capsule-button .divider {
+            width: 1px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .capsule-button .icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .form-container {
+            max-width: 100%;
+            width: 100%;
+            padding: 0 24px;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            padding-left: 40px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background-color: white;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+        .input-group input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+        .input-group .icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4338ca, #4f46e5);
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            color: #4b5563;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            background-color: #f9fafb;
+            transform: translateY(-2px);
+        }
+        .tab-container {
+            display: flex;
+            margin-bottom: 24px;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .tab.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+        .form-panel {
+            display: none;
+        }
+        .form-panel.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="flex flex-col">
+    <!-- 胶囊按钮 -->
+    <div class="capsule-button">
+        <div class="icon"><i class="ri-arrow-left-s-line"></i></div>
+        <div class="divider"></div>
+        <div class="icon"><i class="ri-home-line"></i></div>
+    </div>
+
+    <!-- 登录/注册页面 -->
+    <div class="flex-1 flex flex-col items-center justify-center">
+        <div class="mb-10 text-center">
+            <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center">
+                <i class="ri-calendar-2-line text-white text-3xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800">课程表小程序</h1>
+            <p class="text-gray-500 mt-2">高效管理你的课程安排</p>
+        </div>
+
+        <div class="form-container">
+            <div class="tab-container">
+                <div class="tab active" id="login-tab">登录</div>
+                <div class="tab" id="register-tab">注册</div>
+            </div>
+
+            <!-- 登录表单 -->
+            <div class="form-panel active" id="login-form">
+                <div class="input-group">
+                    <i class="ri-user-line icon"></i>
+                    <input type="text" placeholder="学号/手机号/邮箱" />
+                </div>
+                <div class="input-group">
+                    <i class="ri-lock-line icon"></i>
+                    <input type="password" placeholder="密码" />
+                </div>
+                <div class="flex justify-between items-center mb-6">
+                    <label class="flex items-center text-sm text-gray-600">
+                        <input type="checkbox" class="mr-2 h-4 w-4 text-indigo-600" />
+                        记住我
+                    </label>
+                    <a href="#" class="text-sm text-indigo-600 hover:text-indigo-800">忘记密码?</a>
+                </div>
+                <button class="btn-primary mb-4">登录</button>
+                <div class="text-center text-gray-500 text-sm mb-6">或使用以下方式登录</div>
+                <div class="flex justify-center space-x-6 mb-6">
+                    <a href="#" class="w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center text-xl hover:shadow-lg transition-all">
+                        <i class="ri-wechat-line text-green-500"></i>
+                    </a>
+                    <a href="#" class="w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center text-xl hover:shadow-lg transition-all">
+                        <i class="ri-qq-line text-blue-500"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 注册表单 -->
+            <div class="form-panel" id="register-form">
+                <div class="input-group">
+                    <i class="ri-user-line icon"></i>
+                    <input type="text" placeholder="学号" />
+                </div>
+                <div class="input-group">
+                    <i class="ri-smartphone-line icon"></i>
+                    <input type="tel" placeholder="手机号" />
+                </div>
+                <div class="input-group">
+                    <i class="ri-mail-line icon"></i>
+                    <input type="email" placeholder="邮箱" />
+                </div>
+                <div class="input-group">
+                    <i class="ri-lock-line icon"></i>
+                    <input type="password" placeholder="设置密码" />
+                </div>
+                <div class="input-group">
+                    <i class="ri-lock-line icon"></i>
+                    <input type="password" placeholder="确认密码" />
+                </div>
+                <button class="btn-primary mb-4">注册</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 切换登录和注册表单
+        document.getElementById('login-tab').addEventListener('click', function() {
+            document.getElementById('login-tab').classList.add('active');
+            document.getElementById('register-tab').classList.remove('active');
+            document.getElementById('login-form').classList.add('active');
+            document.getElementById('register-form').classList.remove('active');
+        });
+
+        document.getElementById('register-tab').addEventListener('click', function() {
+            document.getElementById('register-tab').classList.add('active');
+            document.getElementById('login-tab').classList.remove('active');
+            document.getElementById('register-form').classList.add('active');
+            document.getElementById('login-form').classList.remove('active');
+        });
+    </script>
+</body>
+</html>

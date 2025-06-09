@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程节数设置 - 课程表小程序</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .capsule-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 87px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
+        }
+        .capsule-button .divider {
+            width: 1px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .capsule-button .icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .header {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            padding: 60px 24px 24px;
+            color: white;
+        }
+        .period-card {
+            background: white;
+            border-radius: 16px;
+            margin: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .day-item {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 0;
+        }
+        .day-item:last-child {
+            border-bottom: none;
+        }
+        .day-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .day-title {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .period-controls {
+            display: flex;
+            align-items: center;
+        }
+        .period-number {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .btn-control {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4f46e5;
+            cursor: pointer;
+        }
+        .btn-control:hover {
+            background: #e2e8f0;
+        }
+        .period-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .period-badge {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 13px;
+            color: #4b5563;
+        }
+        .btn-save {
+            background: #4f46e5;
+            color: white;
+            border-radius: 100px;
+            padding: 12px 24px;
+            font-weight: 500;
+            margin-top: 24px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-save i {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 胶囊按钮 -->
+    <div class="capsule-button">
+        <div class="icon"><i class="ri-arrow-left-s-line"></i></div>
+        <div class="divider"></div>
+        <div class="icon"><i class="ri-home-line"></i></div>
+    </div>
+
+    <!-- 课程节数设置头部 -->
+    <div class="header">
+        <h1 class="text-xl font-bold">课程节数设置</h1>
+        <p class="text-white text-opacity-80 text-sm mt-1">设置每天的课程节数和排列</p>
+    </div>
+
+    <!-- 课程节数设置内容 -->
+    <div class="flex-1 overflow-auto pb-20">
+        <div class="period-card">
+            <h2 class="text-lg font-semibold mb-4">每日课程节数</h2>
+            
+            <div class="day-item">
+                <div class="day-header">
+                    <div class="day-title">星期一</div>
+                    <div class="period-controls">
+                        <div class="btn-control decrease-btn"><i class="ri-subtract-line"></i></div>
+                        <div class="period-number">6</div>
+                        <div class="btn-control increase-btn"><i class="ri-add-line"></i></div>
+                    </div>
+                </div>
+                <div class="period-list">
+                    <div class="period-badge">第1节</div>
+                    <div class="period-badge">第2节</div>
+                    <div class="period-badge">第3节</div>
+                    <div class="period-badge">第4节</div>
+                    <div class="period-badge">第5节</div>
+                    <div class="period-badge">第6节</div>
+                </div>
+            </div>
+            
+            <div class="day-item">
+                <div class="day-header">
+                    <div class="day-title">星期二</div>
+                    <div class="period-controls">
+                        <div class="btn-control decrease-btn"><i class="ri-subtract-line"></i></div>
+                        <div class="period-number">6</div>
+                        <div class="btn-control increase-btn"><i class="ri-add-line"></i></div>
+                    </div>
+                </div>
+                <div class="period-list">
+                    <div class="period-badge">第1节</div>
+                    <div class="period-badge">第2节</div>
+                    <div class="period-badge">第3节</div>
+                    <div class="period-badge">第4节</div>
+                    <div class="period-badge">第5节</div>
+                    <div class="period-badge">第6节</div>
+                </div>
+            </div>
+            
+            <div class="day-item">
+                <div class="day-header">
+                    <div class="day-title">星期三</div>
+                    <div class="period-controls">
+                        <div class="btn-control decrease-btn"><i class="ri-subtract-line"></i></div>
+                        <div class="period-number">6</div>
+                        <div class="btn-control increase-btn"><i class="ri-add-line"></i></div>
+                    </div>
+                </div>
+                <div class="period-list">
+                    <div class="period-badge">第1节</div>
+                    <div class="period-badge">第2节</div>
+                    <div class="period-badge">第3节</div>
+                    <div class="period-badge">第4节</div>
+                    <div class="period-badge">第5节</div>
+                    <div class="period-badge">第6节</div>
+                </div>
+            </div>
+            
+            <div class="day-item">
+                <div class="day-header">
+                    <div class="day-title">星期四</div>
+                    <div class="period-controls">
+                        <div class="btn-control decrease-btn"><i class="ri-subtract-line"></i></div>
+                        <div class="period-number">6</div>
+                        <div class="btn-control increase-btn"><i class="ri-add-line"></i></div>
+                    </div>
+                </div>
+                <div class="period-list">
+                    <div class="period-badge">第1节</div>
+                    <div class="period-badge">第2节</div>
+                    <div class="period-badge">第3节</div>
+                    <div class="period-badge">第4节</div>
+                    <div class="period-badge">第5节</div>
+                    <div class="period-badge">第6节</div>
+                </div>
+            </div>
+            
+            <div class="day-item">
+                <div class="day-header">
+                    <div class="day-title">星期五</div>
+                    <div class="period-controls">
+                        <div class="btn-control decrease-btn"><i class="ri-subtract-line"></i></div>
+                        <div class="period-number">6</div>
+                        <div class="btn-control increase-btn"><i class="ri-add-line"></i></div>
+                    </div>
+                </div>
+                <div class="period-list">
+                    <div class="period-badge">第1节</div>
+                    <div class="period-badge">第2节</div>
+                    <div class="period-badge">第3节</div>
+                    <div class="period-badge">第4节</div>
+                    <div class="period-badge">第5节</div>
+                    <div class="period-badge">第6节</div>
+                </div>
+            </div>
+            
+            <button class="btn-save">
+                <i class="ri-save-line"></i> 保存设置
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // 返回按钮点击事件
+        document.querySelector('.capsule-button .icon:first-child').addEventListener('click', function() {
+            window.location.href = './courses.html';
+        });
+        
+        // 首页按钮点击事件
+        document.querySelector('.capsule-button .icon:last-child').addEventListener('click', function() {
+            window.location.href = './index.html';
+        });
+        
+        // 增加节数按钮点击事件
+        document.querySelectorAll('.increase-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const numberElement = this.parentNode.querySelector('.period-number');
+                let number = parseInt(numberElement.textContent);
+                if (number < 12) {
+                    number++;
+                    numberElement.textContent = number;
+                    updatePeriodList(this.closest('.day-item'), number);
+                }
+            });
+        });
+        
+        // 减少节数按钮点击事件
+        document.querySelectorAll('.decrease-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const numberElement = this.parentNode.querySelector('.period-number');
+                let number = parseInt(numberElement.textContent);
+                if (number > 1) {
+                    number--;
+                    numberElement.textContent = number;
+                    updatePeriodList(this.closest('.day-item'), number);
+                }
+            });
+        });
+        
+        // 更新课程节数列表
+        function updatePeriodList(dayItem, number) {
+            const periodList = dayItem.querySelector('.period-list');
+            periodList.innerHTML = '';
+            
+            for (let i = 1; i <= number; i++) {
+                const badge = document.createElement('div');
+                badge.className = 'period-badge';
+                badge.textContent = `第${i}节`;
+                periodList.appendChild(badge);
+            }
+        }
+        
+        // 保存按钮点击事件
+        document.querySelector('.btn-save').addEventListener('click', function() {
+            alert('课程节数设置已保存！');
+        });
+    </script>
+</body>
+</html>

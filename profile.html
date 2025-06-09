@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人信息管理 - 课程表小程序</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .capsule-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 87px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
+        }
+        .capsule-button .divider {
+            width: 1px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .capsule-button .icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .header {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            padding: 60px 24px 30px;
+            color: white;
+            position: relative;
+        }
+        .avatar-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+        }
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .avatar-edit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 28px;
+            height: 28px;
+            background: #4f46e5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            color: white;
+            font-size: 14px;
+        }
+        .info-section {
+            background: white;
+            border-radius: 16px;
+            margin: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4f46e5;
+            margin-right: 12px;
+        }
+        .info-content {
+            flex: 1;
+        }
+        .info-label {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+        .info-value {
+            font-size: 15px;
+            color: #1e293b;
+            font-weight: 500;
+        }
+        .info-arrow {
+            color: #cbd5e1;
+            font-size: 20px;
+        }
+        .btn-logout {
+            width: calc(100% - 32px);
+            margin: 16px;
+            padding: 14px;
+            border-radius: 12px;
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            color: #ef4444;
+            font-weight: 600;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-logout i {
+            margin-right: 8px;
+        }
+        .nav-bar {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            padding: 12px 0 8px;
+            border-top: 1px solid #f1f5f9;
+        }
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+        .nav-item.active {
+            color: #4f46e5;
+        }
+        .nav-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 胶囊按钮 -->
+    <div class="capsule-button">
+        <div class="icon"><i class="ri-arrow-left-s-line"></i></div>
+        <div class="divider"></div>
+        <div class="icon"><i class="ri-home-line"></i></div>
+    </div>
+
+    <!-- 个人信息头部 -->
+    <div class="header">
+        <div class="avatar-container">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=160&q=80" class="avatar" alt="用户头像">
+            <div class="avatar-edit">
+                <i class="ri-camera-line"></i>
+            </div>
+        </div>
+        <h1 class="text-xl font-bold text-center">张同学</h1>
+        <p class="text-center text-white text-opacity-80 text-sm mt-1">计算机科学与技术 2020级</p>
+    </div>
+
+    <!-- 个人信息内容 -->
+    <div class="flex-1 overflow-auto pb-20">
+        <div class="info-section">
+            <h2 class="text-lg font-semibold mb-2">基本信息</h2>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="ri-user-3-line"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">姓名</div>
+                    <div class="info-value">张同学</div>
+                </div>
+                <div class="info-arrow">
+                    <i class="ri-arrow-right-s-line"></i>
+                </div>
+            </div>
+                        
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="ri-building-line"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">学历</div>
+                    <div class="info-value">本科</div>
+                </div>
+                <div class="info-arrow">
+                    <i class="ri-arrow-right-s-line"></i>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="ri-book-open-line"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">学校</div>
+                    <div class="info-value">北京大学</div>
+                </div>
+                <div class="info-arrow">
+                    <i class="ri-arrow-right-s-line"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h2 class="text-lg font-semibold mb-2">联系方式</h2>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="ri-smartphone-line"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">手机号</div>
+                    <div class="info-value">138****6666</div>
+                </div>
+                <div class="info-arrow">
+                    <i class="ri-arrow-right-s-line"></i>
+                </div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="ri-mail-line"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">邮箱</div>
+                    <div class="info-value">student@example.com</div>
+                </div>
+                <div class="info-arrow">
+                    <i class="ri-arrow-right-s-line"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h2 class="text-lg font-semibold mb-2">账号安全</h2>
+            
+            <div class="info-item">
+                <div class="info-icon">
+                    <i class="ri-lock-password-line"></i>
+                </div>
+                <div class="info-content">
+                    <div class="info-label">修改密码</div>
+                    <div class="info-value">定期更新密码以保障账号安全</div>
+                </div>
+                <div class="info-arrow">
+                    <i class="ri-arrow-right-s-line"></i>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn-logout">
+            <i class="ri-logout-box-r-line"></i> 退出登录
+        </button>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="nav-bar">
+        <div class="nav-item">
+            <i class="ri-calendar-2-line nav-icon"></i>
+            <span>课程表</span>
+        </div>
+        <div class="nav-item">
+            <i class="ri-book-2-line nav-icon"></i>
+            <span>课程设置</span>
+        </div>
+        <div class="nav-item active">
+            <i class="ri-user-3-fill nav-icon"></i>
+            <span>我的</span>
+        </div>
+    </div>
+</body>
+</html>

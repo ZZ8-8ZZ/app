@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程时间设置 - 课程表小程序</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .capsule-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 87px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
+        }
+        .capsule-button .divider {
+            width: 1px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .capsule-button .icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .header {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            padding: 60px 24px 24px;
+            color: white;
+        }
+        .time-card {
+            background: white;
+            border-radius: 16px;
+            margin: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .time-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        .time-item:last-child {
+            margin-bottom: 0;
+        }
+        .time-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4f46e5;
+            font-weight: 600;
+            margin-right: 16px;
+        }
+        .time-content {
+            flex: 1;
+        }
+        .time-range {
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .time-input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .time-separator {
+            margin: 0 8px;
+            color: #94a3b8;
+        }
+        .btn-save {
+            background: #4f46e5;
+            color: white;
+            border-radius: 100px;
+            padding: 12px 24px;
+            font-weight: 500;
+            margin-top: 24px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-save i {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 胶囊按钮 -->
+    <div class="capsule-button">
+        <div class="icon"><i class="ri-arrow-left-s-line"></i></div>
+        <div class="divider"></div>
+        <div class="icon"><i class="ri-home-line"></i></div>
+    </div>
+
+    <!-- 课程时间设置头部 -->
+    <div class="header">
+        <h1 class="text-xl font-bold">课程时间设置</h1>
+        <p class="text-white text-opacity-80 text-sm mt-1">设置每节课的上课和下课时间</p>
+    </div>
+
+    <!-- 课程时间设置内容 -->
+    <div class="flex-1 overflow-auto pb-20">
+        <div class="time-card">
+            <h2 class="text-lg font-semibold mb-4">上下课时间</h2>
+            
+            <div class="time-item">
+                <div class="time-number">1</div>
+                <div class="time-content">
+                    <div class="text-sm font-medium text-gray-700">第1节</div>
+                    <div class="time-range">
+                        <input type="time" class="time-input" value="08:00">
+                        <span class="time-separator">至</span>
+                        <input type="time" class="time-input" value="08:45">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="time-item">
+                <div class="time-number">2</div>
+                <div class="time-content">
+                    <div class="text-sm font-medium text-gray-700">第2节</div>
+                    <div class="time-range">
+                        <input type="time" class="time-input" value="08:55">
+                        <span class="time-separator">至</span>
+                        <input type="time" class="time-input" value="09:40">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="time-item">
+                <div class="time-number">3</div>
+                <div class="time-content">
+                    <div class="text-sm font-medium text-gray-700">第3节</div>
+                    <div class="time-range">
+                        <input type="time" class="time-input" value="10:00">
+                        <span class="time-separator">至</span>
+                        <input type="time" class="time-input" value="10:45">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="time-item">
+                <div class="time-number">4</div>
+                <div class="time-content">
+                    <div class="text-sm font-medium text-gray-700">第4节</div>
+                    <div class="time-range">
+                        <input type="time" class="time-input" value="10:55">
+                        <span class="time-separator">至</span>
+                        <input type="time" class="time-input" value="11:40">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="time-item">
+                <div class="time-number">5</div>
+                <div class="time-content">
+                    <div class="text-sm font-medium text-gray-700">第5节</div>
+                    <div class="time-range">
+                        <input type="time" class="time-input" value="14:00">
+                        <span class="time-separator">至</span>
+                        <input type="time" class="time-input" value="14:45">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="time-item">
+                <div class="time-number">6</div>
+                <div class="time-content">
+                    <div class="text-sm font-medium text-gray-700">第6节</div>
+                    <div class="time-range">
+                        <input type="time" class="time-input" value="14:55">
+                        <span class="time-separator">至</span>
+                        <input type="time" class="time-input" value="15:40">
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-save">
+                <i class="ri-save-line"></i> 保存设置
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // 返回按钮点击事件
+        document.querySelector('.capsule-button .icon:first-child').addEventListener('click', function() {
+            window.location.href = './courses.html';
+        });
+        
+        // 首页按钮点击事件
+        document.querySelector('.capsule-button .icon:last-child').addEventListener('click', function() {
+            window.location.href = './index.html';
+        });
+        
+        // 保存按钮点击事件
+        document.querySelector('.btn-save').addEventListener('click', function() {
+            alert('课程时间设置已保存！');
+        });
+    </script>
+</body>
+</html>

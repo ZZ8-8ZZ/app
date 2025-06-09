@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程表展示 - 课程表小程序</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .capsule-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 87px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
+        }
+        .capsule-button .divider {
+            width: 1px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .capsule-button .icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .header {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            padding: 60px 24px 24px;
+            color: white;
+            position: relative;
+        }
+        .week-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+        .week-arrow {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .week-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .day-header {
+            display: flex;
+            background: white;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 12px 0;
+        }
+        .day-header-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+        }
+        .day-name {
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        .day-date {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .day-date.today {
+            width: 24px;
+            height: 24px;
+            background: #4f46e5;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .schedule-container {
+            flex: 1;
+            overflow: auto;
+            position: relative;
+        }
+        .time-column {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 36px;
+            background: #f8fafc;
+            border-right: 1px solid #f1f5f9;
+            z-index: 10;
+        }
+        .time-item {
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 8px;
+            font-size: 12px;
+            color: #64748b;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .schedule-grid {
+            margin-left: 36px;
+            display: flex;
+        }
+        .schedule-column {
+            flex: 1;
+            min-width: 0;
+        }
+        .schedule-cell {
+            height: 120px;
+            border-right: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 4px;
+        }
+        .course-item {
+            height: 100%;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 12px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .course-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .course-info {
+            font-size: 10px;
+            opacity: 0.9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .current-time-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ef4444;
+            z-index: 20;
+        }
+        .current-time-dot {
+            position: absolute;
+            left: 36px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+            transform: translate(-50%, -50%);
+            z-index: 21;
+        }
+        .nav-bar {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            padding: 12px 0 8px;
+            border-top: 1px solid #f1f5f9;
+        }
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+        .nav-item.active {
+            color: #4f46e5;
+        }
+        .nav-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+        .empty-tip {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #94a3b8;
+            padding: 20px;
+            text-align: center;
+        }
+        .empty-icon {
+            font-size: 48px;
+            color: #cbd5e1;
+            margin-bottom: 16px;
+        }
+        .btn-add-course {
+            margin-top: 16px;
+            padding: 8px 16px;
+            border-radius: 100px;
+            background: #4f46e5;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        .btn-add-course i {
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 胶囊按钮 -->
+    <div class="capsule-button">
+        <div class="icon"><i class="ri-arrow-left-s-line"></i></div>
+        <div class="divider"></div>
+        <div class="icon"><i class="ri-home-line"></i></div>
+    </div>
+
+    <!-- 课程表头部 -->
+    <div class="header">
+        <h1 class="text-xl font-bold">课程表</h1>
+        <p class="text-white text-opacity-80 text-sm mt-1">2023-2024学年第一学期</p>
+        
+        <div class="week-selector">
+            <div class="week-arrow">
+                <i class="ri-arrow-left-s-line"></i>
+            </div>
+            <div class="week-title">第 3 周</div>
+            <div class="week-arrow">
+                <i class="ri-arrow-right-s-line"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 日期头部 -->
+    <div class="day-header">
+        <div class="day-header-item">
+            <div class="day-name">一</div>
+            <div class="day-date">9/18</div>
+        </div>
+        <div class="day-header-item">
+            <div class="day-name">二</div>
+            <div class="day-date">9/19</div>
+        </div>
+        <div class="day-header-item">
+            <div class="day-name">三</div>
+            <div class="day-date today">9/20</div>
+        </div>
+        <div class="day-header-item">
+            <div class="day-name">四</div>
+            <div class="day-date">9/21</div>
+        </div>
+        <div class="day-header-item">
+            <div class="day-name">五</div>
+            <div class="day-date">9/22</div>
+        </div>
+    </div>
+
+    <!-- 课程表内容 -->
+    <div class="schedule-container">
+        <!-- 时间列 -->
+        <div class="time-column">
+            <div class="time-item">1</div>
+            <div class="time-item">2</div>
+            <div class="time-item">3</div>
+            <div class="time-item">4</div>
+            <div class="time-item">5</div>
+            <div class="time-item">6</div>
+            <div class="time-item">7</div>
+            <div class="time-item">8</div>
+        </div>
+        
+        <!-- 当前时间线 -->
+        <div class="current-time-line" style="top: 250px;"></div>
+        <div class="current-time-dot" style="top: 250px;"></div>
+        
+        <!-- 课程表格 -->
+        <div class="schedule-grid">
+            <!-- 周一 -->
+            <div class="schedule-column">
+                <div class="schedule-cell">
+                    <div class="course-item" style="background-color: #4f46e5;">
+                        <div class="course-name">高等数学(下)</div>
+                        <div class="course-info">王教授</div>
+                        <div class="course-info">教学楼A-301</div>
+                    </div>
+                </div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell">
+                    <div class="course-item" style="background-color: #10b981;">
+                        <div class="course-name">大学物理</div>
+                        <div class="course-info">刘教授</div>
+                        <div class="course-info">物理楼B-201</div>
+                    </div>
+                </div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+            </div>
+            
+            <!-- 周二 -->
+            <div class="schedule-column">
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell">
+                    <div class="course-item" style="background-color: #f59e0b;">
+                        <div class="course-name">数据结构与算法</div>
+                        <div class="course-info">张教授</div>
+                        <div class="course-info">计算机楼C-402</div>
+                    </div>
+                </div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+            </div>
+            
+            <!-- 周三 -->
+            <div class="schedule-column">
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell">
+                    <div class="course-item" style="background-color: #06b6d4;">
+                        <div class="course-name">大学英语(4)</div>
+                        <div class="course-info">李教授</div>
+                        <div class="course-info">外语楼B-205</div>
+                    </div>
+                </div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell">
+                    <div class="course-item" style="background-color: #8b5cf6;">
+                        <div class="course-name">计算机网络</div>
+                        <div class="course-info">陈教授</div>
+                        <div class="course-info">计算机楼C-305</div>
+                    </div>
+                </div>
+                <div class="schedule-cell"></div>
+            </div>
+            
+            <!-- 周四 -->
+            <div class="schedule-column">
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell">
+                    <div class="course-item" style="background-color: #ec4899;">
+                        <div class="course-name">操作系统</div>
+                        <div class="course-info">黄教授</div>
+                        <div class="course-info">计算机楼B-403</div>
+                    </div>
+                </div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+            </div>
+            
+            <!-- 周五 -->
+            <div class="schedule-column">
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell">
+                    <div class="course-item" style="background-color: #f97316;">
+                        <div class="course-name">软件工程</div>
+                        <div class="course-info">赵教授</div>
+                        <div class="course-info">计算机楼A-506</div>
+                    </div>
+                </div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+                <div class="schedule-cell"></div>
+            </div>
+        </div>
+        
+        <!-- 空课程提示 -->
+        <div class="empty-tip">
+            <i class="ri-calendar-line empty-icon"></i>
+            <div class="text-base font-medium text-gray-600 mb-2">本周没有课程安排</div>
+            <div class="text-sm text-gray-500 mb-4">添加课程，开始规划你的学习时间</div>
+            <button class="btn-add-course">
+                <i class="ri-add-line"></i> 添加课程
+            </button>
+        </div>
+    </div>
+    
+    <!-- 底部导航栏 -->
+    <div class="nav-bar">
+        <div class="nav-item active">
+            <i class="ri-calendar-2-fill nav-icon"></i>
+            <span>课程表</span>
+        </div>
+        <div class="nav-item">
+            <i class="ri-book-2-line nav-icon"></i>
+            <span>课程设置</span>
+        </div>
+        <div class="nav-item">
+            <i class="ri-user-3-line nav-icon"></i>
+            <span>我的</span>
+        </div>
+    </div>
+    
+    <script>
+        // 周次切换交互
+        const prevWeekBtn = document.querySelector('.week-arrow:first-child');
+        const nextWeekBtn = document.querySelector('.week-arrow:last-child');
+        const weekTitle = document.querySelector('.week-title');
+        let currentWeek = 3;
+        
+        prevWeekBtn.addEventListener('click', function() {
+            if (currentWeek > 1) {
+                currentWeek--;
+                weekTitle.textContent = `第 ${currentWeek} 周`;
+                // 这里可以添加加载对应周次课程的逻辑
+            }
+        });
+        
+        nextWeekBtn.addEventListener('click', function() {
+            if (currentWeek < 20) {
+                currentWeek++;
+                weekTitle.textContent = `第 ${currentWeek} 周`;
+                // 这里可以添加加载对应周次课程的逻辑
+            }
+        });
+        
+        // 模拟当前时间线移动
+        function updateTimeLine() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            
+            // 假设课程从早上8点开始，每节课50分钟，间隔10分钟
+            const startHour = 8;
+            const totalMinutes = (hours - startHour) * 60 + minutes;
+            const position = (totalMinutes / (12 * 60)) * (120 * 8); // 8节课，每节高度120px
+            
+            const timeLine = document.querySelector('.current-time-line');
+            const timeDot = document.querySelector('.current-time-dot');
+            
+            if (totalMinutes >= 0 && totalMinutes <= 12 * 60) {
+                timeLine.style.top = `${position}px`;
+                timeDot.style.top = `${position}px`;
+                timeLine.style.display = 'block';
+                timeDot.style.display = 'block';
+            } else {
+                timeLine.style.display = 'none';
+                timeDot.style.display = 'none';
+            }
+        }
+        
+        // 初始化时间线位置
+        updateTimeLine();
+        
+        // 每分钟更新时间线位置
+        setInterval(updateTimeLine, 60000);
+    </script>
+</body>
+</html>

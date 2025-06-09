@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程管理 - 课程表小程序</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .capsule-button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 87px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 5px;
+        }
+        .capsule-button .divider {
+            width: 1px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+        .capsule-button .icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .header {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            padding: 60px 24px 24px;
+            color: white;
+            position: relative;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 8px 16px;
+            margin-top: 16px;
+        }
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: white;
+            flex: 1;
+            font-size: 14px;
+            padding: 4px 0;
+        }
+        .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .search-bar input:focus {
+            outline: none;
+        }
+        .search-bar i {
+            color: rgba(255, 255, 255, 0.7);
+            margin-right: 8px;
+        }
+        .course-card {
+            background: white;
+            border-radius: 16px;
+            margin: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .course-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .course-item:last-child {
+            margin-bottom: 0;
+        }
+        .course-color {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 16px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .course-content {
+            flex: 1;
+        }
+        .course-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+        .course-info {
+            font-size: 13px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+        }
+        .course-info i {
+            font-size: 14px;
+            margin-right: 4px;
+        }
+        .course-info span {
+            margin-right: 12px;
+        }
+        .course-actions {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: flex;
+        }
+        .course-action {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            margin-left: 8px;
+            background: #f1f5f9;
+        }
+        .btn-add {
+            width: calc(100% - 32px);
+            margin: 16px;
+            padding: 14px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-add i {
+            margin-right: 8px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4b5563;
+            margin-bottom: 8px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background-color: white;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+        .form-input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background-color: white;
+            transition: all 0.3s;
+            font-size: 15px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+        .form-select:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+        .color-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .color-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .color-option.selected {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
+        }
+        .week-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .week-option {
+            flex: 1;
+        }
+        .week-option .hidden {
+            display: none;
+        }
+        .week-option-btn {
+            padding: 8px 0;
+            border-radius: 100px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            background: #f1f5f9;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .week-option-btn.active {
+            background: #4f46e5;
+            color: white;
+        }
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .week-number {
+            background: #0ea5e9;
+            color: white;
+            border-radius: 8px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .week-number.inactive {
+            background: #e2e8f0;
+            color: #64748b;
+        }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            width: 90%;
+            max-width: 360px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            background: #f1f5f9;
+            cursor: pointer;
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            background-color: #f1f5f9;
+            color: #64748b;
+            font-weight: 600;
+            text-align: center;
+        }
+        .btn-confirm {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .time-cell {
+            padding: 8px;
+            text-align: center;
+            background: #f1f5f9;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #64748b;
+            cursor: pointer;
+        }
+        .time-cell.selected {
+            background: #4f46e5;
+            color: white;
+        }
+        .time-header {
+            font-weight: 600;
+            color: #1e293b;
+            background: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 胶囊按钮 -->
+    <div class="capsule-button">
+        <div class="icon"><i class="ri-arrow-left-s-line"></i></div>
+        <div class="divider"></div>
+        <div class="icon"><i class="ri-home-line"></i></div>
+    </div>
+
+    <!-- 课程管理头部 -->
+    <div class="header">
+        <h1 class="text-xl font-bold">课程管理</h1>
+        <p class="text-white text-opacity-80 text-sm mt-1">2023-2024学年第一学期</p>
+        
+        <div class="search-bar">
+            <i class="ri-search-line"></i>
+            <input type="text" placeholder="搜索课程名称、教师、地点等">
+        </div>
+    </div>
+
+    <!-- 课程列表 -->
+    <div class="flex-1 overflow-auto pb-20">
+        <div class="course-card">
+            <h2 class="text-lg font-semibold mb-4">我的课程</h2>
+            
+            <div class="course-item">
+                <div class="course-color" style="background-color: #4f46e5;">
+                    <span>高数</span>
+                </div>
+                <div class="course-content">
+                    <div class="course-name">高等数学(下)</div>
+                    <div class="course-info">
+                        <i class="ri-user-line"></i>
+                        <span>王教授</span>
+                        <i class="ri-map-pin-line"></i>
+                        <span>教学楼A-301</span>
+                    </div>
+                    <div class="course-info mt-1">
+                        <i class="ri-time-line"></i>
+                        <span>周一 1-2节</span>
+                        <i class="ri-calendar-line"></i>
+                        <span>1-16周</span>
+                    </div>
+                </div>
+                <div class="course-actions">
+                    <div class="course-action">
+                        <i class="ri-edit-line"></i>
+                    </div>
+                    <div class="course-action">
+                        <i class="ri-delete-bin-line"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="course-item">
+                <div class="course-color" style="background-color: #06b6d4;">
+                    <span>英语</span>
+                </div>
+                <div class="course-content">
+                    <div class="course-name">大学英语(4)</div>
+                    <div class="course-info">
+                        <i class="ri-user-line"></i>
+                        <span>李教授</span>
+                        <i class="ri-map-pin-line"></i>
+                        <span>外语楼B-205</span>
+                    </div>
+                    <div class="course-info mt-1">
+                        <i class="ri-time-line"></i>
+                        <span>周三 3-4节</span>
+                        <i class="ri-calendar-line"></i>
+                        <span>1-16周</span>
+                    </div>
+                </div>
+                <div class="course-actions">
+                    <div class="course-action">
+                        <i class="ri-edit-line"></i>
+                    </div>
+                    <div class="course-action">
+                        <i class="ri-delete-bin-line"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="course-item">
+                <div class="course-color" style="background-color: #f59e0b;">
+                    <span>数据</span>
+                </div>
+                <div class="course-content">
+                    <div class="course-name">数据结构与算法</div>
+                    <div class="course-info">
+                        <i class="ri-user-line"></i>
+                        <span>张教授</span>
+                        <i class="ri-map-pin-line"></i>
+                        <span>计算机楼C-402</span>
+                    </div>
+                    <div class="course-info mt-1">
+                        <i class="ri-time-line"></i>
+                        <span>周二 5-6节</span>
+                        <i class="ri-calendar-line"></i>
+                        <span>1-16周(单周)</span>
+                    </div>
+                </div>
+                <div class="course-actions">
+                    <div class="course-action">
+                        <i class="ri-edit-line"></i>
+                    </div>
+                    <div class="course-action">
+                        <i class="ri-delete-bin-line"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn-add" id="btn-add-course">
+            <i class="ri-add-line"></i> 添加新课程
+        </button>
+    </div>
+    
+    <!-- 添加课程弹窗 -->
+    <div class="modal" id="add-course-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">添加新课程</div>
+                <div class="modal-close" id="modal-close">
+                    <i class="ri-close-line"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">课程名称</label>
+                <input type="text" class="form-input" placeholder="例如：高等数学">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">课程颜色</label>
+                <div class="color-options">
+                    <div class="color-option selected" style="background-color: #4f46e5;"></div>
+                    <div class="color-option" style="background-color: #06b6d4;"></div>
+                    <div class="color-option" style="background-color: #f59e0b;"></div>
+                    <div class="color-option" style="background-color: #10b981;"></div>
+                    <div class="color-option" style="background-color: #ef4444;"></div>
+                    <div class="color-option" style="background-color: #8b5cf6;"></div>
+                    <div class="color-option" style="background-color: #ec4899;"></div>
+                    <div class="color-option" style="background-color: #f97316;"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">教师姓名</label>
+                <input type="text" class="form-input" placeholder="例如：王教授">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">上课地点</label>
+                <input type="text" class="form-input" placeholder="例如：教学楼A-301">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">上课时间</label>
+                <select class="form-select mb-2">
+                    <option value="1">周一</option>
+                    <option value="2">周二</option>
+                    <option value="3">周三</option>
+                    <option value="4">周四</option>
+                    <option value="5">周五</option>
+                    <option value="6">周六</option>
+                    <option value="7">周日</option>
+                </select>
+                
+                <div class="time-grid">
+                    <div class="time-cell time-header">1</div>
+                    <div class="time-cell time-header">2</div>
+                    <div class="time-cell time-header">3</div>
+                    <div class="time-cell time-header">4</div>
+                    <div class="time-cell time-header">5</div>
+                    <div class="time-cell selected">8:00-8:45</div>
+                    <div class="time-cell selected">8:55-9:40</div>
+                    <div class="time-cell">10:00-10:45</div>
+                    <div class="time-cell">10:55-11:40</div>
+                    <div class="time-cell">13:30-14:15</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">上课周数</label>
+                <div class="week-options mb-3">
+                    <label class="week-option">
+                        <input type="radio" name="week-type" class="hidden">
+                        <div class="week-option-btn">单周</div>
+                    </label>
+                    <label class="week-option">
+                        <input type="radio" name="week-type" class="hidden">
+                        <div class="week-option-btn">双周</div>
+                    </label>
+                    <label class="week-option">
+                        <input type="radio" name="week-type" class="hidden" checked>
+                        <div class="week-option-btn active">全选</div>
+                    </label>
+                </div>
+                
+                <div class="week-grid">
+                    <div class="week-number">1</div>
+                    <div class="week-number">2</div>
+                    <div class="week-number">3</div>
+                    <div class="week-number">4</div>
+                    <div class="week-number">5</div>
+                    <div class="week-number">6</div>
+                    <div class="week-number">7</div>
+                    <div class="week-number">8</div>
+                    <div class="week-number">9</div>
+                    <div class="week-number">10</div>
+                    <div class="week-number">11</div>
+                    <div class="week-number">12</div>
+                    <div class="week-number">13</div>
+                    <div class="week-number">14</div>
+                    <div class="week-number">15</div>
+                    <div class="week-number">16</div>
+                    <div class="week-number">17</div>
+                    <div class="week-number">18</div>
+                    <div class="week-number">19</div>
+                    <div class="week-number">20</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">备注信息</label>
+                <input type="text" class="form-input" placeholder="选填，例如：带课本、作业要求等">
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn-cancel" id="btn-cancel">取消</button>
+                <button class="btn-confirm">确认添加</button>
+            </div>
+        </div>
+    </div>
+    
+
+    
+    <script>
+        // 添加课程弹窗交互
+        document.getElementById('btn-add-course').addEventListener('click', function() {
+            document.getElementById('add-course-modal').classList.add('active');
+        });
+        
+        document.getElementById('modal-close').addEventListener('click', function() {
+            document.getElementById('add-course-modal').classList.remove('active');
+        });
+        
+        document.getElementById('btn-cancel').addEventListener('click', function() {
+            document.getElementById('add-course-modal').classList.remove('active');
+        });
+        
+        // 颜色选择交互
+        const colorOptions = document.querySelectorAll('.color-option');
+        colorOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                colorOptions.forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        
+        // 时间选择交互
+        const timeCells = document.querySelectorAll('.time-cell:not(.time-header)');
+        timeCells.forEach(cell => {
+            cell.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+        
+        // 上课周数选择交互
+        const weekOptions = document.querySelectorAll('.week-option');
+        const weekNumbers = document.querySelectorAll('.week-number');
+        
+        // 周数选择模式（单周、双周、全选）
+        weekOptions.forEach((option, index) => {
+            const radio = option.querySelector('input[type="radio"]');
+            const btn = option.querySelector('.week-option-btn');
+            
+            btn.addEventListener('click', function() {
+                // 更新按钮样式
+                weekOptions.forEach(opt => {
+                    opt.querySelector('.week-option-btn').classList.remove('active');
+                    opt.querySelector('input[type="radio"]').checked = false;
+                });
+                btn.classList.add('active');
+                radio.checked = true;
+                
+                // 根据选择模式更新周数按钮
+                if (index === 0) { // 单周
+                    weekNumbers.forEach((num, i) => {
+                        if ((i + 1) % 2 === 1) { // 单数周
+                            num.classList.remove('inactive');
+                        } else {
+                            num.classList.add('inactive');
+                        }
+                    });
+                } else if (index === 1) { // 双周
+                    weekNumbers.forEach((num, i) => {
+                        if ((i + 1) % 2 === 0) { // 双数周
+                            num.classList.remove('inactive');
+                        } else {
+                            num.classList.add('inactive');
+                        }
+                    });
+                } else { // 全选
+                    weekNumbers.forEach(num => {
+                        num.classList.remove('inactive');
+                    });
+                }
+            });
+        });
+        
+        // 点击周数按钮切换选中状态
+        weekNumbers.forEach(num => {
+            num.addEventListener('click', function() {
+                if (!this.classList.contains('inactive')) {
+                    this.classList.toggle('selected');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
