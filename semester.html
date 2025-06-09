@@ -241,7 +241,7 @@
 </head>
 <body>
     <!-- 胶囊按钮 -->
-    <div class="capsule-button">
+    <div class="capsule-button" style="z-index: 100;">
         <div class="icon"><i class="ri-arrow-left-s-line"></i></div>
         <div class="divider"></div>
         <div class="icon"><i class="ri-home-line"></i></div>
@@ -345,6 +345,16 @@
 
     
     <script>
+        // 返回按钮点击事件
+        document.querySelector('.capsule-button .icon:first-child').addEventListener('click', function() {
+            window.location.href = './courses.html';
+        });
+        
+        // 首页按钮点击事件
+        document.querySelector('.capsule-button .icon:last-child').addEventListener('click', function() {
+            window.location.href = './index.html';
+        });
+
         // 添加学期弹窗交互
         document.getElementById('btn-add-semester').addEventListener('click', function() {
             document.getElementById('add-semester-modal').classList.add('active');

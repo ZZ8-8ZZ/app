@@ -128,11 +128,11 @@
 </head>
 <body class="flex flex-col">
     <!-- 胶囊按钮 -->
-    <div class="capsule-button">
+    <!-- <div class="capsule-button">
         <div class="icon"><i class="ri-arrow-left-s-line"></i></div>
         <div class="divider"></div>
         <div class="icon"><i class="ri-home-line"></i></div>
-    </div>
+    </div> -->
 
     <!-- 登录/注册页面 -->
     <div class="flex-1 flex flex-col items-center justify-center">
@@ -154,7 +154,7 @@
             <div class="form-panel active" id="login-form">
                 <div class="input-group">
                     <i class="ri-user-line icon"></i>
-                    <input type="text" placeholder="学号/手机号/邮箱" />
+                    <input type="text" placeholder="手机号/邮箱" />
                 </div>
                 <div class="input-group">
                     <i class="ri-lock-line icon"></i>
@@ -163,7 +163,7 @@
                 <div class="flex justify-between items-center mb-6">
                     <label class="flex items-center text-sm text-gray-600">
                         <input type="checkbox" class="mr-2 h-4 w-4 text-indigo-600" />
-                        记住我
+                        我已阅读并同意<a href="#">《用户协议》</a>和<a href="#">《隐私政策》</a>
                     </label>
                     <a href="#" class="text-sm text-indigo-600 hover:text-indigo-800">忘记密码?</a>
                 </div>
@@ -182,10 +182,6 @@
             <!-- 注册表单 -->
             <div class="form-panel" id="register-form">
                 <div class="input-group">
-                    <i class="ri-user-line icon"></i>
-                    <input type="text" placeholder="学号" />
-                </div>
-                <div class="input-group">
                     <i class="ri-smartphone-line icon"></i>
                     <input type="tel" placeholder="手机号" />
                 </div>
@@ -200,6 +196,12 @@
                 <div class="input-group">
                     <i class="ri-lock-line icon"></i>
                     <input type="password" placeholder="确认密码" />
+                </div>
+                <div class="flex justify-between items-center mb-6">
+                    <label class="flex items-center text-sm text-gray-600">
+                        <input type="checkbox" class="mr-2 h-4 w-4 text-indigo-600" />
+                        我已阅读并同意<a href="#">《用户协议》</a>和<a href="#">《隐私政策》</a>
+                    </label>
                 </div>
                 <button class="btn-primary mb-4">注册</button>
             </div>
